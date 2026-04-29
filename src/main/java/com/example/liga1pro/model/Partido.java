@@ -1,5 +1,7 @@
 package com.example.liga1pro.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -15,12 +17,14 @@ public class Partido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "equipo_local_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Equipo equipoLocal;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "equipo_visitante_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Equipo equipoVisitante;
 
     private LocalDateTime fechaHora;
