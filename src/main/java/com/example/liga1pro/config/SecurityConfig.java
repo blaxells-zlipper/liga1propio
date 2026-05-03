@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/jugadores/**").permitAll()
                         .requestMatchers("/api/tabla/**").permitAll()
                         .requestMatchers("/api/estadisticas/**").permitAll()
+                        .requestMatchers("/api/favorito/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

@@ -1,6 +1,8 @@
 package com.example.liga1pro.service;
 
+import com.example.liga1pro.model.Equipo;
 import com.example.liga1pro.model.Usuario;
+import com.example.liga1pro.repository.EquipoRepository;
 import com.example.liga1pro.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.*;
@@ -14,6 +16,7 @@ public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EquipoRepository equipoRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -30,6 +33,14 @@ public class UsuarioService implements UserDetailsService {
             throw new RuntimeException("Email ya registrado");
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setRol(Usuario.Rol.USER);
+        return usuarioRepository.save(usuario);
+    }
+    public Usuario setEquipoFavorito(Long usuarioId, Long equipoId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Equipo equipo = equipoRepository.findById(equipoId)
+                .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
+        usuario.setEquipoFavorito(equipo);
         return usuarioRepository.save(usuario);
     }
 }
