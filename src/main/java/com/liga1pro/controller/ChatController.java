@@ -9,13 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -57,5 +54,49 @@ public class ChatController {
     @GetMapping("/grupos")
     public ResponseEntity<List<GrupoChat>> obtenerGrupos() {
         return ResponseEntity.ok(chatService.obtenerGrupos());
+    }
+
+    // =========================================================
+    // MEMBRESÍA DE GRUPOS
+    // =========================================================
+
+    @GetMapping("/grupos/{grupoId}/info")
+    public ResponseEntity<Map<String, Object>> infoGrupo(
+            @PathVariable Long grupoId,
+            @RequestParam(required = false) Long usuarioId) {
+
+        long totalMiembros = chatService.contarMiembros(grupoId);
+        boolean esMiembro = usuarioId != null && chatService.esMiembro(grupoId, usuarioId);
+
+        return ResponseEntity.ok(Map.of(
+                "totalMiembros", totalMiembros,
+                "esMiembro", esMiembro
+        ));
+    }
+
+    @PostMapping("/grupos/{grupoId}/unirse")
+    public ResponseEntity<?> unirseAGrupo(
+            @PathVariable Long grupoId,
+            @RequestBody Map<String, Long> body) {
+
+        Long usuarioId = body.get("usuarioId");
+        if (usuarioId == null) {
+            return ResponseEntity.badRequest().body("usuarioId es requerido");
+        }
+        chatService.unirseAGrupo(grupoId, usuarioId);
+        return ResponseEntity.ok(Map.of("mensaje", "Te has unido al grupo"));
+    }
+
+    @PostMapping("/grupos/{grupoId}/salir")
+    public ResponseEntity<?> salirDeGrupo(
+            @PathVariable Long grupoId,
+            @RequestBody Map<String, Long> body) {
+
+        Long usuarioId = body.get("usuarioId");
+        if (usuarioId == null) {
+            return ResponseEntity.badRequest().body("usuarioId es requerido");
+        }
+        chatService.salirDeGrupo(grupoId, usuarioId);
+        return ResponseEntity.ok(Map.of("mensaje", "Has salido del grupo"));
     }
 }

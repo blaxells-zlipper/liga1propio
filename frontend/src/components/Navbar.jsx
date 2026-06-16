@@ -96,7 +96,11 @@ export function Navbar() {
       <div className="navbar-container">
         <div className="navbar-left">
           <div className="navbar-logo">
-            <span className="logo-icon">L</span>
+            <img
+              src="https://assets.football-logos.cc/logos/peru/256x256/peruvian-primera-division.c6f20ea8.png"
+              alt="Liga 1"
+              style={{ width: '32px', height: '32px', objectFit: 'contain' }}
+            />
             <div className="logo-copy">
               <span className="logo-text">Liga1 Pro</span>
               <span className="logo-tag">Fútbol PERUANO</span>
@@ -122,7 +126,7 @@ export function Navbar() {
         <div className="navbar-right">
           {user ? (
             <>
-              <button className="icon-btn" onClick={() => navigate('/chat/grupo/1')} title="Chat">
+              <button className="icon-btn" onClick={() => navigate('/chat')} title="Chat">
                 <ChatIcon />
               </button>
               <button className="icon-btn" onClick={() => navigate('/perfil')} title="Perfil">

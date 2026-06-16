@@ -53,6 +53,9 @@ export const chatService = {
   getPartido: (partidoId) => apiClient.get(`/chat/partido/${partidoId}`),
   getGrupo: (grupoChatId) => apiClient.get(`/chat/grupo/${grupoChatId}`),
   getGrupos: () => apiClient.get('/chat/grupos'),
+  getInfoGrupo: (grupoId, usuarioId) => apiClient.get(`/chat/grupos/${grupoId}/info`, { params: { usuarioId } }),
+  unirseAGrupo: (grupoId, usuarioId) => apiClient.post(`/chat/grupos/${grupoId}/unirse`, { usuarioId }),
+  salirDeGrupo: (grupoId, usuarioId) => apiClient.post(`/chat/grupos/${grupoId}/salir`, { usuarioId }),
 }
 
 export const authService = {
@@ -61,4 +64,10 @@ export const authService = {
   login: (email, password) =>
     apiClient.post('/auth/login', { email, password }),
   getMe: () => apiClient.get('/auth/me'),
+}
+
+export const favoritoService = {
+  get: (usuarioId) => apiClient.get(`/favoritos/${usuarioId}`),
+  marcar: (usuarioId, equipoId) => apiClient.post('/favoritos', { usuarioId, equipoId }),
+  quitar: (usuarioId) => apiClient.delete(`/favoritos/${usuarioId}`),
 }

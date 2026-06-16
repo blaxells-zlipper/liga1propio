@@ -1,18 +1,7 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { partidoService } from '../services/apiService'
 import '../styles/ProximosPartidos.css'
-
-const getTeamAbbreviation = (name) => {
-  if (!name) return '??'
-  const words = name.trim().split(' ').filter(Boolean)
-  if (words.length === 1) {
-    return words[0].slice(0, 2).toUpperCase()
-  }
-  return words
-    .slice(0, 2)
-    .map((word) => word[0]?.toUpperCase())
-    .join('')
-}
 
 export function ProximosPartidos() {
   const [partidos, setPartidos] = useState([])
@@ -22,7 +11,6 @@ export function ProximosPartidos() {
     const loadPartidos = async () => {
       try {
         const response = await partidoService.getByEstado('PROGRAMADO')
-        // Tomar solo los primeros 3
         setPartidos((response.data || []).slice(0, 3))
       } catch (error) {
         console.error('Error cargando próximos partidos:', error)
@@ -37,11 +25,12 @@ export function ProximosPartidos() {
     return <div className="section">Cargando próximos partidos...</div>
   }
 
-  const formatFecha = (fecha) => {
+  const formatFecha = (fecha, hora) => {
     const date = new Date(fecha)
     const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
     const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-    return `${dias[date.getDay()]} ${date.getDate()} ${meses[date.getMonth()]} • ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+    const horaStr = hora ? hora.substring(0, 5) : ''
+    return `${dias[date.getUTCDay()]} ${date.getUTCDate()} ${meses[date.getUTCMonth()]} • ${horaStr}`
   }
 
   return (
@@ -49,25 +38,25 @@ export function ProximosPartidos() {
       <h2>Próximos Partidos</h2>
       <div className="partidos-grid">
         {partidos.map((partido) => (
-          <div key={partido.id} className="partido-card-prox">
+          <Link key={partido.id} to={`/partidos/${partido.id}`} className="partido-card-prox" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="partido-fecha">
-              <span>⏰ {formatFecha(partido.fecha)}</span>
+              <span>⏰ {formatFecha(partido.fecha, partido.hora)}</span>
             </div>
             <div className="partido-matchup">
               <div className="equipo">
-                <div className="logo">{getTeamAbbreviation(partido.equipoLocal?.nombre)}</div>
+                <img src={partido.equipoLocal?.escudo} alt={partido.equipoLocal?.nombre} className="logo" />
                 <span>{partido.equipoLocal?.nombre}</span>
               </div>
               <span className="vs">vs</span>
               <div className="equipo">
-                <div className="logo">{getTeamAbbreviation(partido.equipoVisitante?.nombre)}</div>
+                <img src={partido.equipoVisitante?.escudo} alt={partido.equipoVisitante?.nombre} className="logo" />
                 <span>{partido.equipoVisitante?.nombre}</span>
               </div>
             </div>
             <div className="partido-estadio">
-              <span>📍 {partido.estadio?.nombre}</span>
+              <span>📍 {partido.estadio || 'Estadio no disponible'}</span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>

@@ -23,14 +23,26 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/registro")
-    public ResponseEntity<?> registro(@RequestBody Usuario usuario) {
-        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+    public ResponseEntity<?> registro(@RequestBody Map<String, String> datos) {
+        String nombre = datos.get("nombre");
+        String email = datos.get("email");
+        String password = datos.get("password");
+
+        if (nombre == null || email == null || password == null) {
+            return ResponseEntity.badRequest().body("Nombre, email y password son requeridos");
+        }
+        if (usuarioRepository.findByEmail(email).isPresent()) {
             return ResponseEntity.badRequest().body("Email ya registrado");
         }
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
+        Usuario usuario = new Usuario();
+        usuario.setNombre(nombre);
+        usuario.setEmail(email);
+        usuario.setPassword(passwordEncoder.encode(password));
         usuario.setRol(Rol.USER);
         usuario.setFechaRegistro(LocalDateTime.now());
         usuarioRepository.save(usuario);
+
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuario registrado exitosamente");
     }
 
@@ -41,12 +53,13 @@ public class AuthController {
 
         return usuarioRepository.findByEmail(email)
                 .filter(u -> passwordEncoder.matches(password, u.getPassword()))
-                .map(u -> ResponseEntity.ok(Map.of("token", jwtUtil.generateToken(email))))
+                .map(u -> ResponseEntity.ok(Map.of("token", jwtUtil.generateToken(email, u.getId()))))
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Usuario> obtenerMiUsuario(@RequestHeader(name = "Authorization", required = false) String authHeader) {
+    public ResponseEntity<Usuario> obtenerMiUsuario(
+            @RequestHeader(name = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

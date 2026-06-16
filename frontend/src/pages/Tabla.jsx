@@ -1,22 +1,32 @@
 import { useState, useEffect } from 'react'
-import { tablaPosicionesService } from '../services/apiService'
+import { tablaPosicionesService, equipoService } from '../services/apiService'
 
 export function Tabla() {
   const [tabla, setTabla] = useState([])
+  const [escudos, setEscudos] = useState({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const loadTabla = async () => {
+    const load = async () => {
       try {
-        const response = await tablaPosicionesService.get()
-        setTabla(response.data || [])
+        const [tablaRes, equiposRes] = await Promise.all([
+          tablaPosicionesService.get(),
+          equipoService.getAll(),
+        ])
+        setTabla(tablaRes.data || [])
+
+        const mapaEscudos = {}
+        ;(equiposRes.data || []).forEach(eq => {
+          mapaEscudos[eq.nombre] = eq.escudo
+        })
+        setEscudos(mapaEscudos)
       } catch (error) {
         console.error('Error cargando la tabla:', error)
       } finally {
         setLoading(false)
       }
     }
-    loadTabla()
+    load()
   }, [])
 
   const leader = tabla[0]
@@ -61,15 +71,20 @@ export function Tabla() {
                 {tabla.map((row, index) => (
                   <tr key={index} className={index === 0 ? 'table-row-highlight' : ''}>
                     <td>{row.posicion || index + 1}</td>
-                    <td>{row.equipo?.nombre || row.equipo}</td>
-                    <td>{row.partidosJugados ?? row.pj ?? '-'}</td>
-                    <td>{row.ganados ?? row.pg ?? '-'}</td>
-                    <td>{row.empatados ?? row.pe ?? '-'}</td>
-                    <td>{row.perdidos ?? row.pp ?? '-'}</td>
-                    <td>{row.gf ?? row.gf ?? '-'}</td>
-                    <td>{row.gc ?? row.gc ?? '-'}</td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <img src={escudos[row.equipo]} alt={row.equipo} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                        <span>{row.equipo}</span>
+                      </div>
+                    </td>
+                    <td>{row.pj ?? '-'}</td>
+                    <td>{row.pg ?? '-'}</td>
+                    <td>{row.pe ?? '-'}</td>
+                    <td>{row.pp ?? '-'}</td>
+                    <td>{row.gf ?? '-'}</td>
+                    <td>{row.gc ?? '-'}</td>
                     <td>{row.dg ?? '-'}</td>
-                    <td>{row.pts ?? row.puntos ?? '-'}</td>
+                    <td>{row.pts ?? '-'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -78,17 +93,17 @@ export function Tabla() {
           <div className="table-summary-cards">
             <article className="metric-card">
               <span className="metric-label">Líder actual</span>
-              <h3>{leader?.equipo?.nombre || leader?.equipo || 'Sin datos'}</h3>
-              <p>{leader?.pts ?? leader?.puntos ?? 0} puntos</p>
+              <h3>{leader?.equipo || 'Sin datos'}</h3>
+              <p>{leader?.pts ?? 0} puntos</p>
             </article>
             <article className="metric-card">
               <span className="metric-label">Mejor ataque</span>
-              <h3>{mejorAtaque?.equipo?.nombre || mejorAtaque?.equipo || 'Sin datos'}</h3>
+              <h3>{mejorAtaque?.equipo || 'Sin datos'}</h3>
               <p>{mejorAtaque?.gf ?? 0} goles a favor</p>
             </article>
             <article className="metric-card">
               <span className="metric-label">Mejor defensa</span>
-              <h3>{mejorDefensa?.equipo?.nombre || mejorDefensa?.equipo || 'Sin datos'}</h3>
+              <h3>{mejorDefensa?.equipo || 'Sin datos'}</h3>
               <p>{mejorDefensa?.gc ?? 0} goles en contra</p>
             </article>
           </div>

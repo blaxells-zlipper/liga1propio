@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/estadisticas", "/api/estadisticas/**").permitAll()
                         .requestMatchers("/api/chat/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/api/favoritos/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

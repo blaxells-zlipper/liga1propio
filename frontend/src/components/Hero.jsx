@@ -6,7 +6,11 @@ export function Hero() {
     <section className="hero">
       <div className="hero-content">
         <div className="hero-badge">
-          <span className="hero-badge-icon">🏆</span>
+          <img
+            src="https://assets.football-logos.cc/logos/peru/256x256/peruvian-primera-division.c6f20ea8.png"
+            alt="Liga 1"
+            style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+          />
           TORNEO APERTURA 2026
         </div>
         <h1 className="hero-title">

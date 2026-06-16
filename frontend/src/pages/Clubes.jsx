@@ -36,16 +36,15 @@ export function Clubes() {
         <p>Cargando clubes...</p>
       ) : (
         <div className="clubes-grid">
-          {equipos.map((equipo, index) => (
+          {equipos.map((equipo) => (
             <Link key={equipo.id} to={`/equipos/${equipo.id}`} className="club-card-link">
               <article className="club-card">
                 <div className="club-header">
-                  <div className="club-logo-circle"></div>
-                  <span className="club-badge">🏆 {Math.floor(Math.random() * 30) + 1}</span>
+                  <img src={equipo.escudo} alt={equipo.nombre} className="club-logo-circle" />
                 </div>
-                
+
                 <h2 className="club-name">{equipo.nombre}</h2>
-                
+
                 <div className="club-details">
                   <div className="club-detail-row">
                     <span className="detail-icon">📍</span>
@@ -56,8 +55,8 @@ export function Clubes() {
                     <span className="detail-text">Fundado en {equipo.fundacion || 'N/A'}</span>
                   </div>
                   <div className="club-detail-row">
-                    <span className="detail-icon">👥</span>
-                    <span className="detail-text">{equipo.estadio || equipo.director || 'Director técnico'}</span>
+                    <span className="detail-icon">🏟️</span>
+                    <span className="detail-text">{equipo.estadio || 'Estadio no disponible'}</span>
                   </div>
                 </div>
               </article>

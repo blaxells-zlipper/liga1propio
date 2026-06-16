@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { jugadorService, estadisticasService } from '../services/apiService'
 
+const getIniciales = (nombre, apellido) => {
+  const n = nombre?.[0] || ''
+  const a = apellido?.[0] || ''
+  return (n + a).toUpperCase() || '?'
+}
+
 export function JugadorDetalle() {
   const { id } = useParams()
   const [jugador, setJugador] = useState(null)
@@ -10,18 +16,24 @@ export function JugadorDetalle() {
 
   useEffect(() => {
     const loadJugador = async () => {
+      setLoading(true)
       try {
-        const [jugadorRes, estadisticasRes] = await Promise.all([
-          jugadorService.getById(id),
-          estadisticasService.getJugador(id),
-        ])
+        const jugadorRes = await jugadorService.getById(id)
         setJugador(jugadorRes.data)
-        setEstadisticas(estadisticasRes.data)
       } catch (error) {
         console.error('Error cargando jugador:', error)
-      } finally {
-        setLoading(false)
+        setJugador(null)
       }
+
+      try {
+        const estadisticasRes = await estadisticasService.getJugador(id)
+        setEstadisticas(estadisticasRes.data)
+      } catch (error) {
+        console.error('Error cargando estadísticas:', error)
+        setEstadisticas(null)
+      }
+
+      setLoading(false)
     }
     loadJugador()
   }, [id])
@@ -30,19 +42,67 @@ export function JugadorDetalle() {
     return <div className="section-card">Cargando jugador...</div>
   }
 
+  const nombreCompleto = jugador
+    ? `${jugador.nombre || ''} ${jugador.apellido || ''}`.trim()
+    : 'Jugador no encontrado'
+
   return (
     <section className="section-card">
       <div className="page-header">
-        <div>
-          <p className="eyebrow">Jugador</p>
-          <h1>{jugador?.nombre || 'Jugador no encontrado'}</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {jugador?.foto ? (
+            <img
+              src={jugador.foto}
+              alt={nombreCompleto}
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                flexShrink: 0,
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: '#1a1a2e',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.4rem',
+                fontWeight: 'bold',
+                flexShrink: 0,
+              }}
+            >
+              {getIniciales(jugador?.nombre, jugador?.apellido)}
+            </div>
+          )}
+          <div>
+            <p className="eyebrow">Jugador</p>
+            <h1>{nombreCompleto}</h1>
+          </div>
         </div>
       </div>
       <div className="detail-grid">
         <div className="detail-panel">
           <p className="detail-label">Equipo</p>
           {jugador?.equipo ? (
-            <Link to={`/equipos/${jugador.equipo.id}`} className="detail-link">
+            <Link
+              to={`/equipos/${jugador.equipo.id}`}
+              className="detail-link"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              {jugador.equipo.escudo && (
+                <img
+                  src={jugador.equipo.escudo}
+                  alt={jugador.equipo.nombre}
+                  style={{ width: '24px', height: '24px', objectFit: 'contain' }}
+                />
+              )}
               {jugador.equipo.nombre}
             </Link>
           ) : (
@@ -51,7 +111,11 @@ export function JugadorDetalle() {
           <p className="detail-label">Posición</p>
           <p>{jugador?.posicion || 'No disponible'}</p>
           <p className="detail-label">Número</p>
-          <p>{jugador?.numero || 'No disponible'}</p>
+          <p>{jugador?.numeroCamiseta ?? 'No disponible'}</p>
+          <p className="detail-label">Nacionalidad</p>
+          <p>{jugador?.nacionalidad || 'No disponible'}</p>
+          <p className="detail-label">Edad</p>
+          <p>{jugador?.edad ?? 'No disponible'}</p>
         </div>
         <div className="detail-panel">
           <h2>Estadísticas</h2>

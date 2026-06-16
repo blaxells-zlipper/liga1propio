@@ -52,9 +52,6 @@ export function AuthProvider({ children }) {
     }
 
     connectSocket()
-    return () => {
-      wsService.disconnect()
-    }
   }, [token])
 
   useEffect(() => {

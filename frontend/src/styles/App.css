@@ -662,17 +662,18 @@
 
 .club-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
+  justify-content: center;
 }
 
 .club-logo-circle {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #e5e5e5 0%, #f5f5f5 100%);
+  background: #f5f5f5;
   flex-shrink: 0;
+  object-fit: contain;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .club-badge {
@@ -1258,6 +1259,10 @@ input:checked + .toggle-slider:before {
   margin: 0;
   line-height: 1.6;
 }
+.noticia-destacada .noticia-imagen,
+.noticia-card .noticia-imagen {
+  border-radius: 1.75rem 1.75rem 0 0;
+}
 
 .noticias-grid {
   display: grid;
@@ -1283,8 +1288,9 @@ input:checked + .toggle-slider:before {
 .noticia-imagen {
   width: 100%;
   height: 200px;
-  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+  object-fit: cover;
   flex-shrink: 0;
+  display: block;
 }
 
 .noticia-body {

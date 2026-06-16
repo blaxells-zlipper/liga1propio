@@ -37,6 +37,8 @@ function App() {
               <Route path="/jugadores/:id" element={<JugadorDetalle />} />
               <Route path="/partidos/:id" element={<PartidoDetalle />} />
               <Route path="/chat/:type/:id" element={<Chat />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/chat/:type/:id" element={<Chat />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

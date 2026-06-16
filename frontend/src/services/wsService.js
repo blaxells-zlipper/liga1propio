@@ -6,27 +6,35 @@ class WebSocketService {
     this.client = null
     this.subscriptions = {}
   }
-
   connect(token) {
-    return new Promise((resolve, reject) => {
-      this.client = new Client({
-        webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
-        connectHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-        onConnect: () => {
-          console.log('WebSocket conectado')
-          resolve()
-        },
-        onStompError: (error) => {
-          console.error('Error STOMP:', error)
-          reject(error)
-        },
-      })
-      this.client.activate()
-    })
+  if (this.client && this.client.connected) {
+    return Promise.resolve()
   }
-
+  if (this.connecting) {
+    return this.connecting
+  }
+  this.connecting = new Promise((resolve, reject) => {
+    this.client = new Client({
+      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+      connectHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+      onConnect: () => {
+        console.log('WebSocket conectado')
+        this.connecting = null
+        resolve()
+      },
+      onStompError: (error) => {
+        console.error('Error STOMP:', error)
+        this.connecting = null
+        reject(error)
+      },
+    })
+    this.client.activate()
+  })
+  return this.connecting
+}
+  
   disconnect() {
     if (this.client && this.client.connected) {
       this.client.deactivate()

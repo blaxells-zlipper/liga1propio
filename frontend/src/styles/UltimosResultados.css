@@ -84,18 +84,8 @@
   height: 60px;
   min-width: 60px;
   min-height: 60px;
-  background: linear-gradient(135deg, #E31B23, #C20018);
-  color: white;
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 1.2rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  object-fit: contain;
   flex-shrink: 0;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
 .resultado-match .equipo span {
