@@ -70,6 +70,7 @@ export const jugadorService = {
 export const partidoService = {
   getAll: () => cachedGet('/partidos', {}, 2 * 60 * 1000),
   getById: (id) => cachedGet(`/partidos/${id}`, {}, 2 * 60 * 1000),
+  getPrediccion: (id) => cachedGet(`/partidos/${id}/prediccion`, {}, 24 * 60 * 60 * 1000),
   getByJornada: (jornada) => cachedGet(`/partidos/jornada/${jornada}`, {}, 2 * 60 * 1000),
   getByEstado: (estado) => cachedGet(`/partidos/estado/${estado}`, {}, 2 * 60 * 1000),
 }

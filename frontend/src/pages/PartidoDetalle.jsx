@@ -208,7 +208,7 @@ export function PartidoDetalle() {
         </div>
       </div>
 
-      {esProgramado && (
+      {(esProgramado || esFinalizado) && (
         <div className="mt-6 match-panel">
           <PrediccionIA partido={partido} />
         </div>

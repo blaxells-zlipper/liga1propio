@@ -1,7 +1,8 @@
 import { Client } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
 
-const WS_BASE = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws'
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
+const WS_BASE = import.meta.env.VITE_WS_URL || API_BASE.replace(/\/api\/?$/, '/ws').replace(/^http:/, 'ws:').replace(/^https:/, 'wss:')
 
 class WebSocketService {
   constructor() {

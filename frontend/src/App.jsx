@@ -17,7 +17,17 @@ import { JugadorDetalle } from './pages/JugadorDetalle'
 import { PartidoDetalle } from './pages/PartidoDetalle'
 import { Chat } from './pages/Chat'
 import { Admin } from './pages/Admin'
+import { useAuth } from './context/AuthContext'
 
+function PublicHomeRoute() {
+  const { token, user } = useAuth()
+
+  if (token || user) {
+    return <Navigate to="/principal" replace />
+  }
+
+  return <Home />
+}
 
 function App() {
   return (
@@ -27,7 +37,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Register />} />
           <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<PublicHomeRoute />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/principal" element={<Principal />} />
               <Route path="/fixture" element={<Fixture />} />

@@ -68,6 +68,11 @@ export function Navbar() {
   }
 
   const handleBrandClick = () => {
+    if (user) {
+      navigate('/principal')
+      return
+    }
+
     if (location.pathname === '/') {
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
       return
@@ -87,16 +92,16 @@ export function Navbar() {
         <div className="flex min-h-[62px] items-center justify-between gap-3">
           <button
             type="button"
-            className="typeui-brand-button flex items-center gap-3 px-2 py-1 text-left"
+            className="typeui-brand-button flex items-center px-2 py-1 text-left"
             onClick={handleBrandClick}
             aria-label="Ir al inicio"
           >
             <span className="brand-mark">
-              <Shield className="h-5 w-5" />
-            </span>
-            <span className="hidden flex-col sm:flex">
-              <span className="brand-title">Liga1<span>Pro</span></span>
-              <span className="brand-subtitle">Football intelligence</span>
+              <img
+                src="/logo.png"
+                alt="Logo Liga1Pro"
+                className="h-14 w-14 object-contain"
+              />
             </span>
           </button>
 

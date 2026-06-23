@@ -2,7 +2,9 @@ package com.liga1pro.controller;
 
 import com.liga1pro.model.EstadoPartido;
 import com.liga1pro.model.Partido;
+import com.liga1pro.dto.PrediccionPartidoDTO;
 import com.liga1pro.service.ApiFootballService;
+import com.liga1pro.service.PrediccionPartidoService;
 import com.liga1pro.service.PartidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ public class PartidoController {
 
     private final PartidoService partidoService;
     private final ApiFootballService apiFootballService;
+    private final PrediccionPartidoService prediccionPartidoService;
 
     @GetMapping
     public ResponseEntity<List<Partido>> listarTodos() {
@@ -30,6 +33,15 @@ public class PartidoController {
         try {
             Partido partido = apiFootballService.buscarPartidoPorId(id);
             return ResponseEntity.ok(partido);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{id}/prediccion")
+    public ResponseEntity<PrediccionPartidoDTO> predecir(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(prediccionPartidoService.predecir(id));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

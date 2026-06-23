@@ -290,17 +290,15 @@
   }
 
   .brand-mark {
-    display: grid;
-    width: 42px;
-    height: 42px;
-    place-items: center;
-    border: 1px solid var(--line-strong);
-    border-radius: 50%;
-    background:
-      linear-gradient(135deg, rgba(225, 72, 90, 0.28), rgba(255, 255, 255, 0.05)),
-      #091409;
-    box-shadow: inset 0 0 18px rgba(225, 72, 90, 0.22), 0 0 26px rgba(225, 72, 90, 0.2);
-    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    line-height: 0;
   }
 
   .brand-title {
